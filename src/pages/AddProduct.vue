@@ -74,21 +74,28 @@
           <q-btn
             unelevated
             color="primary"
-            @click.prevent="addVariantModal = true"
+            @click.prevent="
+              variantModal.shown = true;
+              variantModal.type = 'add';
+            "
             >Add Variant</q-btn
           >
         </div>
         <div class="q-mt-md">
           <product-variant
-            v-for="product in productData.variants"
-            :key="product.id"
-            :id="product.id"
+            v-for="(product, i) in productData.variants"
+            :key="product.type"
+            :id="i"
             :name="product.type"
             :category="product.category"
             :price="product.price"
             :qty="product.qty"
+            @swiped-right="removeVariant"
+            @swiped-left="editVariant"
           />
-          <p v-if="productData.variants.length == 0">No variants added</p>
+          <p v-if="productData.variants.length == 0">
+            No product variant added
+          </p>
         </div>
       </div>
       <div class="row justify-end">
@@ -103,11 +110,11 @@
       </div>
     </q-form>
 
-    <q-dialog v-model="addVariantModal" position="bottom">
+    <q-dialog v-model="variantModal.shown" position="bottom">
       <q-card style="width: 100%">
         <q-card-section class="column no-wrap">
           <div>
-            <div class="text-weight-bold text-h6">Add Product Variant</div>
+            <div class="text-weight-bold text-h6">Product Variant</div>
             <div class="text-grey">Please fill-in all the fields</div>
           </div>
           <div>
@@ -165,7 +172,7 @@ import { useProduct } from "../composable/products";
 import { useQuasar } from "quasar";
 import { useRouter } from "vue-router";
 
-const addVariantModal = ref(false);
+const variantModal = ref({ shown: false, type: "add", editId: null });
 const $q = useQuasar();
 const router = useRouter();
 
@@ -181,7 +188,10 @@ const initialState = {
   stocks: "",
   cost: "",
   lowLevelStock: "",
-  variants: [],
+  variants: [
+    { type: "Black", price: 12500, cost: 10000, qty: 100 },
+    { type: "Orange", price: 12500, cost: 10000, qty: 150 },
+  ],
 };
 
 const variantInitialState = { type: "", price: "", cost: "", qty: 0 };
@@ -200,12 +210,36 @@ const resetVariantForm = () => {
 };
 
 const saveVariant = () => {
-  productData.variants.unshift({
-    ...variant,
-  });
+  if (variantModal.value.type === "add") {
+    productData.variants.unshift({
+      ...variant,
+    });
+  }
+
+  if (variantModal.value.type === "update") {
+    productData.variants[variantModal.value.editId] = { ...variant };
+  }
 
   resetVariantForm();
-  addVariantModal.value = false;
+  variantModal.value.shown = false;
+};
+
+const editVariant = (id) => {
+  Object.assign(variant, productData.variants[id]);
+  variantModal.value.shown = true;
+  variantModal.value.type = "update";
+  variantModal.value.editId = id;
+};
+
+const removeVariant = (index) => {
+  console.log("Received Index: ", index);
+  productData.variants.splice(index, 1);
+  $q.notify({
+    position: "top",
+    color: "green",
+    icon: "done_all",
+    message: "Product variant has been removed!",
+  });
 };
 
 const saveProduct = () => {

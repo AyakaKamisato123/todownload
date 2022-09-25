@@ -129,7 +129,7 @@ const containerHeight = ref(200);
 const summary = ref(200);
 
 const NAV_HEIGHT = 72;
-const OFFSET_HEIGHT = 60;
+const OFFSET_HEIGHT = 70;
 const RECENT_HEADING_HEIGHT = 32 + 16; //Heading and subheading
 
 onMounted(() => {

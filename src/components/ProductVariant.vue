@@ -1,7 +1,7 @@
 <template>
   <q-slide-item
-    @left="swipedLeft"
-    @right="swipedRight"
+    @left="(opt) => swipedLeft(opt, id)"
+    @right="swipedRight(id)"
     right-color="red"
     style=""
   >
@@ -30,11 +30,11 @@ const props = defineProps({
     required: true,
   },
   qty: {
-    type: Number,
+    type: [Number, String],
     required: true,
   },
   price: {
-    type: Number,
+    type: [Number, String],
     required: true,
   },
   id: {
@@ -49,7 +49,8 @@ const swipedRight = (id) => {
   emit("swipedRight", id);
 };
 
-const swipedLeft = (id) => {
+function swipedLeft({ reset }, id) {
+  reset();
   emit("swipedLeft", id);
-};
+}
 </script>
