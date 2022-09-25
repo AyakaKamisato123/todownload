@@ -3,7 +3,7 @@
     <div ref="summary">
       <div>
         <p class="text-h6">Hello, John Doe!</p>
-        <p class="text-weight-regular text-caption">
+        <p class="text-weight-regular text-subtitle1">
           Welcome, Here is your store summary.
         </p>
       </div>
@@ -79,22 +79,30 @@
 
     <div class="q-mt-md">
       <div>
-        <p class="text-h6">Recent Transactions</p>
-        <p class="text-weight-regular text-caption">
-          Here are your recent transactions
+        <p class="text-h6">Recent Products</p>
+        <p class="text-weight-regular text-subtitle1">
+          Here are your recently added products
         </p>
       </div>
-      <div ref="scrollableTransaction" class="q-mt-sm">
+      <div
+        ref="scrollableTransaction"
+        class="q-mt-sm"
+        v-if="products.length > 0"
+      >
         <q-scroll-area :style="`height: ${containerHeight}px`">
           <product-list
-            v-for="product in productCards"
+            v-for="product in products"
             :key="product.productName"
-            :productName="product.productName"
+            :productName="product.name"
             :category="product.category"
-            :price="product.price"
+            :price="formatCurrency(product.price)"
           />
         </q-scroll-area>
       </div>
+      <p v-else class="q-mt-md text-subtitle1 text-grey-6">
+        No products available. You may add your product by clicking the plus
+        icon
+      </p>
     </div>
 
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
@@ -105,12 +113,15 @@
 <script setup>
 import ProductList from "src/components/ProductList.vue";
 import { appRoute } from "src/router/constants";
-import { ref, onMounted, watchEffect } from "vue";
-import { productCards } from "src/constants/products";
+import { ref, onMounted } from "vue";
+import { productCards } from "src/helpers/products";
+import { useProduct } from "src/composable/products";
+import { formatCurrency } from "../helpers/utilities";
 
 import { dom } from "quasar";
 const { offset, height } = dom;
 
+const products = useProduct();
 const scrollableTransaction = ref("");
 
 /** Element Refs */
@@ -137,8 +148,4 @@ onMounted(() => {
 
   // console.log(`Dom Height: ${height(window)}`);
 });
-
-// watchEffect(
-//   () => (containerHeight.value = offset(scrollableTransaction.value).top - 400)
-// );
 </script>

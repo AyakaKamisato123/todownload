@@ -1,5 +1,10 @@
 <template>
-  <q-slide-item @left="swipedLeft" @right="swipedRight" right-color="red">
+  <q-slide-item
+    @left="swipedLeft"
+    @right="swipedRight"
+    right-color="red"
+    style=""
+  >
     <template v-slot:left>
       <q-icon name="edit" />
     </template>
@@ -10,7 +15,6 @@
     <q-item class="q-mx-none q-px-none row">
       <q-item-section class="row">
         <p class="text-subtitle1">{{ name }}</p>
-        <p class="text-grey-7">{{ category }}</p>
       </q-item-section>
       <q-item-section side top>
         <p class="text-subtitle1">PHP {{ price }}</p>
@@ -25,12 +29,8 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  category: {
-    type: String,
-    required: true,
-  },
   qty: {
-    type: String,
+    type: Number,
     required: true,
   },
   price: {

@@ -10,7 +10,9 @@
       <q-item-section>
         <div class="row">
           <div>
-            <q-item-label>{{ productName }}</q-item-label>
+            <q-item-label class="text-capitalize">{{
+              productName
+            }}</q-item-label>
             <q-item-label caption lines="2">{{ category }}</q-item-label>
           </div>
         </div>
