@@ -1,6 +1,6 @@
 import { ref, watch, onMounted, onUnmounted } from "vue";
 
-const useProductData = (key, defaultValue) => {
+export const useLocalStorage = (key, defaultValue) => {
   const data = ref(defaultValue);
 
   const readData = () => {
@@ -28,5 +28,5 @@ const useProductData = (key, defaultValue) => {
 };
 
 export const useProduct = () => {
-  return useProductData("products", []);
+  return useLocalStorage("products", []);
 };

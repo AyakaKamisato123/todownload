@@ -11,10 +11,19 @@
           label="Product Label"
           :rules="fieldRequired"
         />
-        <q-input
-          v-model="productData.category"
+        <q-select
+          v-model="productData.categories"
+          :options="productCategories"
           label="Category"
-          :rules="fieldRequired"
+          option-value="id"
+          option-label="category"
+          :rule="fieldRequired"
+          emit-value
+          map-options
+          multiple
+          use-chips
+          clearable
+          virtual-scroll-slice-size="5"
         />
         <q-input
           v-model="productData.description"
@@ -166,11 +175,11 @@
 <script setup>
 import { reactive, ref } from "vue";
 import ProductVariant from "src/components/ProductVariant.vue";
-import { productCards } from "src/helpers/products";
 import { fieldRequired } from "../helpers/fieldRules";
 import { useProduct } from "../composable/products";
 import { useQuasar } from "quasar";
 import { useRouter } from "vue-router";
+import { productCategories } from "src/helpers/categories";
 
 const variantModal = ref({ shown: false, type: "add", editId: null });
 const $q = useQuasar();

@@ -94,8 +94,9 @@
             v-for="product in products"
             :key="product.productName"
             :productName="product.name"
-            :category="product.category"
+            :category="product.categories"
             :price="formatCurrency(product.price)"
+            :qty="product.stocks"
           />
         </q-scroll-area>
       </div>
@@ -114,7 +115,6 @@
 import ProductList from "src/components/ProductList.vue";
 import { appRoute } from "src/router/constants";
 import { ref, onMounted } from "vue";
-import { productCards } from "src/helpers/products";
 import { useProduct } from "src/composable/products";
 import { formatCurrency } from "../helpers/utilities";
 
@@ -139,13 +139,5 @@ onMounted(() => {
       NAV_HEIGHT +
       RECENT_HEADING_HEIGHT +
       OFFSET_HEIGHT);
-
-  // console.log(
-  //   `Summary Height: ${height(summary.value)}, Scrollable Transaction: ${
-  //     containerHeight.value
-  //   }`
-  // );
-
-  // console.log(`Dom Height: ${height(window)}`);
 });
 </script>

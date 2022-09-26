@@ -9,9 +9,24 @@
     <q-separator class="q-mt-md" />
 
     <div class="q-gutter-sm q-mt-md">
-      <q-input outlined v-model="data.storeName" label="Store Name" />
-      <q-input outlined v-model="data.address" label="Store Address" />
-      <q-input outlined v-model="data.storeContact" label="Business Number" />
+      <q-input
+        outlined
+        v-model="data.storeName"
+        label="Store Name"
+        :rule="fieldRequired"
+      />
+      <q-input
+        outlined
+        v-model="data.address"
+        label="Store Address"
+        :rule="fieldRequired"
+      />
+      <q-input
+        outlined
+        v-model="data.storeContact"
+        label="Business Number"
+        :rule="fieldRequired"
+      />
       <div class="q-gutter-sm row q-mx-none q-mt-none">
         <div class="col">
           <q-input
@@ -77,20 +92,44 @@
       <q-input outlined v-model="data.owner" label="Full Name" />
       <q-input outlined v-model="data.ownerContact" label="Contact Number" />
       <q-input outlined v-model="data.ownerEmail" label="Email Address" />
+      <q-select
+        v-model="data.ownerGender"
+        :options="['Male', 'Female', 'Others']"
+        outlined
+        label="Gender"
+        :rule="fieldRequired"
+        clearable
+      />
     </div>
     <div class="row justify-end q-mt-md">
-      <q-btn unelevated color="primary">Update Data</q-btn>
+      <q-btn @click.prevent="saveSettings" unelevated color="primary"
+        >Update Data</q-btn
+      >
     </div>
   </q-page>
 </template>
 <script setup>
-import { ref } from "vue";
-const data = ref({
+import { reactive, onMounted } from "vue";
+import { useAppSettings } from "src/composable/app-settings";
+import { fieldRequired } from "src/helpers/fieldRules";
+
+const appSettings = useAppSettings();
+
+const data = reactive({
   storeName: "",
   address: "",
   storeContact: "",
   owner: "",
   ownerEmail: "",
   ownerContact: "",
+  ownerGender: "",
 });
+
+onMounted(() => {
+  Object.assign(data, appSettings.value);
+});
+
+const saveSettings = () => {
+  appSettings.value = { ...data };
+};
 </script>
