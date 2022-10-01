@@ -85,15 +85,15 @@
         </p>
       </div>
       <div
+        v-if="products.length > 0"
         ref="scrollableTransaction"
         class="q-mt-sm"
-        v-if="products.length > 0"
       >
         <q-scroll-area :style="`height: ${containerHeight}px`">
           <product-list
             v-for="product in products"
             :key="product.productName"
-            :productName="product.name"
+            :product-name="product.name"
             :category="product.categories"
             :price="formatCurrency(product.price)"
             :qty="product.stocks"
@@ -119,7 +119,7 @@ import { useProduct } from "src/composable/products";
 import { formatCurrency } from "../helpers/utilities";
 
 import { dom } from "quasar";
-const { offset, height } = dom;
+const { height } = dom;
 
 const products = useProduct();
 const scrollableTransaction = ref("");

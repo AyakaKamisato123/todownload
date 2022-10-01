@@ -38,16 +38,16 @@
         <div class="row q-gutter-sm q-mx-none">
           <div class="col">
             <q-input
-              type="number"
               v-model="productData.price"
+              type="number"
               label="Price"
               :rules="fieldRequired"
             />
           </div>
           <div class="col">
             <q-input
-              type="number"
               v-model="productData.stocks"
+              type="number"
               label="Stocks"
               :rules="fieldRequired"
             />
@@ -56,16 +56,16 @@
         <div class="row q-gutter-sm q-mx-none">
           <div class="col">
             <q-input
-              type="number"
               v-model="productData.cost"
+              type="number"
               label="Product Cost"
               :rules="fieldRequired"
             />
           </div>
           <div class="col">
             <q-input
-              type="number"
               v-model="productData.lowLevelStock"
+              type="number"
               label="Low Level"
               :rules="fieldRequired"
             />
@@ -136,24 +136,24 @@
           <div class="row q-gutter-sm">
             <div class="col">
               <q-input
-                type="number"
                 v-model="variant.price"
+                type="number"
                 label="Price"
                 :rules="fieldRequired"
               />
             </div>
             <div class="col">
               <q-input
-                type="number"
                 v-model="variant.cost"
+                type="number"
                 label="Cost"
                 :rules="fieldRequired"
               />
             </div>
             <div class="col">
               <q-input
-                type="number"
                 v-model="variant.qty"
+                type="number"
                 label="Stocks"
                 :rules="fieldRequired"
               />
@@ -209,10 +209,10 @@ const productData = reactive({ ...initialState });
 const variant = reactive({ ...variantInitialState });
 
 /** Reset Form Solution */
-const resetForm = () => {
-  form.value.resetValidation();
-  Object.assign(productData, initialState);
-};
+// const resetForm = () => {
+//   form.value.resetValidation();
+//   Object.assign(productData, initialState);
+// };
 
 const resetVariantForm = () => {
   Object.assign(variant, variantInitialState);

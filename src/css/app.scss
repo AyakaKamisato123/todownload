@@ -17,3 +17,18 @@ h6 {
 .text-caption {
   line-height: 1rem;
 }
+
+.img-fluid {
+  height: auto;
+  max-width: 100%;
+}
+
+.img-description {
+  position: absolute;
+  bottom: 5px;
+  left: 0;
+  width: 100%;
+  padding: 12px 10px;
+  background-color: rgba(0, 0, 0, 0.323);
+  color: white;
+}

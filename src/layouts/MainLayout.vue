@@ -41,6 +41,4 @@
 </template>
 <script setup>
 import { appRoute } from "src/router/constants";
-import { ref } from "vue";
-const activeTab = ref("");
 </script>

@@ -1,14 +1,14 @@
 <template>
   <q-slide-item
+    style=""
+    right-color="red"
     @left="(opt) => swipedLeft(opt, id)"
     @right="swipedRight(id)"
-    right-color="red"
-    style=""
   >
-    <template v-slot:left>
+    <template #left>
       <q-icon name="edit" />
     </template>
-    <template v-slot:right>
+    <template #right>
       <q-icon name="delete" />
     </template>
 
@@ -24,7 +24,7 @@
   </q-slide-item>
 </template>
 <script setup>
-const props = defineProps({
+defineProps({
   name: {
     type: String,
     required: true,

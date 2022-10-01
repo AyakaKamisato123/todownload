@@ -10,9 +10,9 @@
       <q-item-section>
         <div class="row">
           <div>
-            <q-item-label class="text-capitalize">{{
-              productName
-            }}</q-item-label>
+            <q-item-label class="text-capitalize">
+              {{ productName }}
+            </q-item-label>
             <q-item-label caption lines="2">
               <q-chip
                 v-for="categ in mappedCategory.slice(0, 1)"
