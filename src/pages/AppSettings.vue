@@ -10,33 +10,33 @@
 
     <div class="q-gutter-sm q-mt-md">
       <q-input
-        outlined
         v-model="data.storeName"
+        outlined
         label="Store Name"
         :rule="fieldRequired"
       />
       <q-input
-        outlined
         v-model="data.address"
+        outlined
         label="Store Address"
         :rule="fieldRequired"
       />
       <q-input
-        outlined
         v-model="data.storeContact"
+        outlined
         label="Business Number"
         :rule="fieldRequired"
       />
       <div class="q-gutter-sm row q-mx-none q-mt-none">
         <div class="col">
           <q-input
-            outlined
             v-model="data.openingHour"
+            outlined
             mask="time"
             :rules="['time']"
             label="Opening"
           >
-            <template v-slot:append>
+            <template #append>
               <q-icon name="access_time" class="cursor-pointer">
                 <q-popup-proxy
                   cover
@@ -55,13 +55,13 @@
         </div>
         <div class="col">
           <q-input
-            outlined
             v-model="data.closingHour"
+            outlined
             mask="time"
             :rules="['time']"
             label="Closing"
           >
-            <template v-slot:append>
+            <template #append>
               <q-icon name="access_time" class="cursor-pointer">
                 <q-popup-proxy
                   cover
@@ -89,9 +89,9 @@
     <q-separator class="q-mt-md" />
 
     <div class="q-gutter-sm q-mt-md">
-      <q-input outlined v-model="data.owner" label="Full Name" />
-      <q-input outlined v-model="data.ownerContact" label="Contact Number" />
-      <q-input outlined v-model="data.ownerEmail" label="Email Address" />
+      <q-input v-model="data.owner" outlined label="Full Name" />
+      <q-input v-model="data.ownerContact" outlined label="Contact Number" />
+      <q-input v-model="data.ownerEmail" outlined label="Email Address" />
       <q-select
         v-model="data.ownerGender"
         :options="['Male', 'Female', 'Others']"
@@ -101,18 +101,54 @@
         clearable
       />
     </div>
-    <div class="row justify-end q-mt-md">
-      <q-btn @click.prevent="saveSettings" unelevated color="primary"
+    <div class="row justify-end q-mt-sm q-gutter-sm">
+      <q-btn unelevated color="primary" @click.prevent="resetModalShown = true"
+        >Reset Data</q-btn
+      >
+      <q-btn unelevated color="primary" @click.prevent="saveSettings"
         >Update Data</q-btn
       >
     </div>
+
+    <q-dialog v-model="resetModalShown" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <p class="q-ml-sm text-h6 q-mb-sm">Reset Data</p>
+          <span class="q-ml-sm"
+            >This will reset everything including products and user data.
+            <span class="text-red"
+              >Are you sure you want to proceed?</span
+            ></span
+          >
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn
+            flat
+            label="Cancel"
+            color="primary"
+            v-close-popup
+            :disable="isBtnLoading"
+          />
+          <q-btn
+            flat
+            label="Proceed"
+            color="red"
+            @click.prevent="resetData"
+            :loading="isBtnLoading"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 <script setup>
-import { reactive, onMounted } from "vue";
+import { reactive, onMounted, ref } from "vue";
 import { useAppSettings } from "src/composable/app-settings";
 import { fieldRequired } from "src/helpers/fieldRules";
 
+const resetModalShown = ref(false);
+const isBtnLoading = ref(false);
 const appSettings = useAppSettings();
 
 const data = reactive({
@@ -131,5 +167,15 @@ onMounted(() => {
 
 const saveSettings = () => {
   appSettings.value = { ...data };
+};
+
+const resetData = () => {
+  isBtnLoading.value = true;
+  localStorage.removeItem("products");
+  localStorage.removeItem("app-settings");
+  setTimeout(() => {
+    isBtnLoading.value = false;
+    resetModalShown.value = false;
+  }, 1500);
 };
 </script>

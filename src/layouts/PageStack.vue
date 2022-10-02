@@ -3,11 +3,11 @@
     <q-header class="bg-white shadow-2">
       <q-toolbar class="text-black">
         <q-btn
-          @click.prevent="router.back()"
           padding="none"
           unelevated
           icon="arrow_back"
           size="sm"
+          @click.prevent="router.back()"
         ></q-btn>
         <q-toolbar-title class="px-none">
           {{ route.name }}

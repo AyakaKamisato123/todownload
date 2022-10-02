@@ -93,8 +93,8 @@
         <div class="q-mt-md">
           <product-variant
             v-for="(product, i) in productData.variants"
-            :key="product.type"
             :id="i"
+            :key="product.type"
             :name="product.type"
             :category="product.category"
             :price="product.price"
@@ -114,7 +114,7 @@
           color="primary"
           class="q-mt-lg"
           style="width: 100%; display: block"
-          >Save Product</q-btn
+          >Update Product</q-btn
         >
       </div>
     </q-form>
@@ -165,7 +165,7 @@
             color="primary"
             style="width: 100%; display: block"
             @click.prevent="saveVariant"
-            >Save Variant</q-btn
+            >Update Variant</q-btn
           >
         </q-card-section>
       </q-card>
@@ -173,20 +173,35 @@
   </q-page>
 </template>
 <script setup>
-import { reactive, ref } from "vue";
+import { reactive, ref, onMounted } from "vue";
 import ProductVariant from "src/components/ProductVariant.vue";
 import { fieldRequired } from "../helpers/fieldRules";
 import { useProduct } from "../composable/products";
 import { useQuasar } from "quasar";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { productCategories } from "src/helpers/categories";
 
 const variantModal = ref({ shown: false, type: "add", editId: null });
 const $q = useQuasar();
+
 const router = useRouter();
+const route = useRoute();
 
 const products = useProduct();
 const form = ref(null);
+
+let productId = ref(null);
+
+onMounted(() => {
+  productId.value = route.params.id;
+  const prodUpdate = products.value.filter(
+    (prod) => prod.id == productId.value
+  )[0];
+
+  console.log(prodUpdate);
+  if (prodUpdate === undefined) return router.push("/inventory");
+  Object.assign(productData, prodUpdate);
+});
 
 const initialState = {
   name: "",
@@ -197,22 +212,13 @@ const initialState = {
   stocks: "",
   cost: "",
   lowLevelStock: "",
-  variants: [
-    { type: "Black", price: 12500, cost: 10000, qty: 100 },
-    { type: "Orange", price: 12500, cost: 10000, qty: 150 },
-  ],
+  variants: [],
 };
 
 const variantInitialState = { type: "", price: "", cost: "", qty: 0 };
 
 const productData = reactive({ ...initialState });
 const variant = reactive({ ...variantInitialState });
-
-/** Reset Form Solution */
-// const resetForm = () => {
-//   form.value.resetValidation();
-//   Object.assign(productData, initialState);
-// };
 
 const resetVariantForm = () => {
   Object.assign(variant, variantInitialState);
@@ -241,7 +247,6 @@ const editVariant = (id) => {
 };
 
 const removeVariant = (index) => {
-  console.log("Received Index: ", index);
   productData.variants.splice(index, 1);
   $q.notify({
     position: "top",
@@ -252,19 +257,18 @@ const removeVariant = (index) => {
 };
 
 const updateProduct = () => {
-  products.value.unshift({
+  products.value[productId.value] = {
     ...productData,
-    createdAt: Date.now(),
     updatedAt: Date.now(),
-  });
+  };
 
   $q.notify({
     position: "top",
     color: "green",
     icon: "done_all",
-    message: "Product added successfully!",
+    message: "Product updated successfully!",
   });
 
-  router.push("/");
+  router.go(-1);
 };
 </script>

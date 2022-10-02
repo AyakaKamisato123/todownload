@@ -23,9 +23,12 @@
         </div>
       </div>
 
-      <div class="row q-gutter-sm" style="margin-top: 0px">
+      <div class="row q-gutter-sm items-stretch" style="margin-top: 0px">
         <div class="col">
-          <q-card flat class="shadow-2 bg-grey-10 text-white q-px-sm">
+          <q-card
+            flat
+            class="shadow-2 bg-grey-10 text-white q-px-sm full-height"
+          >
             <q-card-section horizontal class="items-center row justify-between">
               <q-card-section>
                 <p class="text-h4">100</p>
@@ -38,7 +41,7 @@
           </q-card>
         </div>
         <div class="col">
-          <q-card flat class="shadow-2 bg-red-7 text-white q-px-sm">
+          <q-card flat class="shadow-2 bg-red-7 text-white q-px-sm full-height">
             <q-card-section horizontal class="items-center row justify-between">
               <q-card-section>
                 <p class="text-h4">240</p>

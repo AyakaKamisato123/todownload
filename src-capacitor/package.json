@@ -1,0 +1,12 @@
+{
+  "name": "pos-mobile-offline",
+  "version": "0.0.1",
+  "description": "A point of sales offline mobile app built with quasar",
+  "author": "Newbie",
+  "private": true,
+  "dependencies": {
+    "@capacitor/android": "^2.5.0",
+    "@capacitor/cli": "^2.0.0",
+    "@capacitor/core": "^2.0.0"
+  }
+}

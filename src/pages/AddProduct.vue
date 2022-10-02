@@ -93,8 +93,8 @@
         <div class="q-mt-md">
           <product-variant
             v-for="(product, i) in productData.variants"
-            :key="product.type"
             :id="i"
+            :key="product.type"
             :name="product.type"
             :category="product.category"
             :price="product.price"
@@ -189,6 +189,7 @@ const products = useProduct();
 const form = ref(null);
 
 const initialState = {
+  id: products.value.length,
   name: "",
   category: "",
   description: "",
@@ -203,16 +204,15 @@ const initialState = {
   ],
 };
 
-const variantInitialState = { type: "", price: "", cost: "", qty: 0 };
+const variantInitialState = {
+  type: "",
+  price: "",
+  cost: "",
+  qty: 0,
+};
 
 const productData = reactive({ ...initialState });
 const variant = reactive({ ...variantInitialState });
-
-/** Reset Form Solution */
-// const resetForm = () => {
-//   form.value.resetValidation();
-//   Object.assign(productData, initialState);
-// };
 
 const resetVariantForm = () => {
   Object.assign(variant, variantInitialState);
@@ -220,7 +220,7 @@ const resetVariantForm = () => {
 
 const saveVariant = () => {
   if (variantModal.value.type === "add") {
-    productData.variants.unshift({
+    productData.variants.push({
       ...variant,
     });
   }

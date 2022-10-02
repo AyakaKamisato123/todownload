@@ -1,19 +1,21 @@
 <template>
   <div class="relative-position">
-    <img src="https://via.placeholder.com/240" alt="" class="img-fluid" />
-    <div class="img-description">
-      <span>{{ productName }}</span
-      ><br />
-      <span>{{ price }}</span>
-    </div>
+    <router-link :to="`/update-product/${id}`">
+      <img src="https://via.placeholder.com/240" alt="" class="img-fluid" />
+      <div class="img-description">
+        <span>{{ productName }}</span
+        ><br />
+        <span>{{ price }}</span>
+      </div>
+    </router-link>
   </div>
 </template>
 <script setup>
-import { onMounted, ref } from "vue";
-import { productCategories } from "src/helpers/categories";
-const mappedCategory = ref([]);
-
-const props = defineProps({
+defineProps({
+  id: {
+    type: [String, Number],
+    required: true,
+  },
   productName: {
     type: String,
     required: true,
@@ -30,11 +32,5 @@ const props = defineProps({
     type: [Number, String],
     required: true,
   },
-});
-
-onMounted(() => {
-  mappedCategory.value = productCategories.filter((categ) =>
-    props.category.includes(categ.id)
-  );
 });
 </script>
