@@ -1,4 +1,6 @@
 <template>
-  <div></div>
+  <div>
+    <p>Im in the cart items</p>
+  </div>
 </template>
 <script setup></script>

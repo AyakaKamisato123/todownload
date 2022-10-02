@@ -102,10 +102,18 @@
       />
     </div>
     <div class="row justify-end q-mt-sm q-gutter-sm">
-      <q-btn unelevated color="primary" @click.prevent="resetModalShown = true"
+      <q-btn
+        unelevated
+        color="primary"
+        @click.prevent="resetModalShown = true"
+        :disable="isBtnLoading"
         >Reset Data</q-btn
       >
-      <q-btn unelevated color="primary" @click.prevent="saveSettings"
+      <q-btn
+        unelevated
+        color="primary"
+        :loading="isBtnLoading"
+        @click.prevent="saveSettings"
         >Update Data</q-btn
       >
     </div>
@@ -126,8 +134,8 @@
           <q-btn
             flat
             label="Cancel"
-            color="primary"
             v-close-popup
+            color="primary"
             :disable="isBtnLoading"
           />
           <q-btn
@@ -146,10 +154,12 @@
 import { reactive, onMounted, ref } from "vue";
 import { useAppSettings } from "src/composable/app-settings";
 import { fieldRequired } from "src/helpers/fieldRules";
+import { useQuasar } from "quasar";
 
 const resetModalShown = ref(false);
 const isBtnLoading = ref(false);
 const appSettings = useAppSettings();
+const $q = useQuasar();
 
 const data = reactive({
   storeName: "",
@@ -166,7 +176,18 @@ onMounted(() => {
 });
 
 const saveSettings = () => {
+  isBtnLoading.value = true;
   appSettings.value = { ...data };
+
+  setTimeout(() => {
+    isBtnLoading.value = false;
+    $q.notify({
+      position: "bottom",
+      color: "green",
+      icon: "done_all",
+      message: "Settings saved successfully!",
+    });
+  }, 1000);
 };
 
 const resetData = () => {

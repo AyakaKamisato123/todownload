@@ -54,9 +54,22 @@ const routes = [
     redirect: { name: appRoute.POINT_OF_SALES },
     children: [
       {
-        path: "/products",
+        path: "products",
         name: appRoute.POINT_OF_SALES,
         component: () => import("pages/PointOfSales.vue"),
+      },
+    ],
+  },
+
+  {
+    path: "/cart",
+    component: () => import("layouts/PageStack.vue"),
+    redirect: { name: appRoute.CART },
+    children: [
+      {
+        path: "summary",
+        name: appRoute.CART,
+        component: () => import("pages/CartItems.vue"),
       },
     ],
   },

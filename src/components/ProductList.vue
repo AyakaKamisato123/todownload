@@ -23,9 +23,10 @@
               >
                 {{ categ.category }}
               </q-chip>
-              <q-chip size="sm">
+              <q-chip size="sm" v-if="mappedCategory.length > 0">
                 +{{ mappedCategory.length - 1 }} Categories
               </q-chip>
+              <q-chip size="sm" v-else>Uncategorized</q-chip>
             </q-item-label>
           </div>
         </div>
@@ -50,7 +51,7 @@ const props = defineProps({
   },
   category: {
     type: [String, Array],
-    required: true,
+    required: false,
   },
   price: {
     type: [Number, String],
@@ -64,7 +65,7 @@ const props = defineProps({
 
 onMounted(() => {
   mappedCategory.value = productCategories.filter((categ) =>
-    props.category.includes(categ.id)
+    props.category?.includes(categ.id)
   );
 });
 </script>

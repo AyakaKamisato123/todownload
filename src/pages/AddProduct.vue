@@ -72,7 +72,7 @@
           </div>
         </div>
       </div>
-      <div class="q-mt-md">
+      <!-- <div class="q-mt-md">
         <div>
           <p class="text-h6">Product Variants</p>
           <p class="text-weight-regular text-caption">
@@ -106,7 +106,7 @@
             No product variant added
           </p>
         </div>
-      </div>
+      </div> -->
       <div class="row justify-end">
         <q-btn
           type="submit"
@@ -118,7 +118,7 @@
         >
       </div>
     </q-form>
-
+    <!--
     <q-dialog v-model="variantModal.shown" position="bottom">
       <q-card style="width: 100%">
         <q-card-section class="column no-wrap">
@@ -169,19 +169,19 @@
           >
         </q-card-section>
       </q-card>
-    </q-dialog>
+    </q-dialog> -->
   </q-page>
 </template>
 <script setup>
 import { reactive, ref } from "vue";
-import ProductVariant from "src/components/ProductVariant.vue";
+// import ProductVariant from "src/components/ProductVariant.vue";
 import { fieldRequired } from "../helpers/fieldRules";
 import { useProduct } from "../composable/products";
 import { useQuasar } from "quasar";
 import { useRouter } from "vue-router";
 import { productCategories } from "src/helpers/categories";
 
-const variantModal = ref({ shown: false, type: "add", editId: null });
+// const variantModal = ref({ shown: false, type: "add", editId: null });
 const $q = useQuasar();
 const router = useRouter();
 
@@ -189,7 +189,7 @@ const products = useProduct();
 const form = ref(null);
 
 const initialState = {
-  id: products.value.length,
+  id: products.value.length + 1,
   name: "",
   category: "",
   description: "",
@@ -198,58 +198,55 @@ const initialState = {
   stocks: "",
   cost: "",
   lowLevelStock: "",
-  variants: [
-    { type: "Black", price: 12500, cost: 10000, qty: 100 },
-    { type: "Orange", price: 12500, cost: 10000, qty: 150 },
-  ],
+  variants: [],
 };
 
-const variantInitialState = {
-  type: "",
-  price: "",
-  cost: "",
-  qty: 0,
-};
+// const variantInitialState = {
+//   type: "",
+//   price: "",
+//   cost: "",
+//   qty: 0,
+// };
 
 const productData = reactive({ ...initialState });
-const variant = reactive({ ...variantInitialState });
+// const variant = reactive({ ...variantInitialState });
 
-const resetVariantForm = () => {
-  Object.assign(variant, variantInitialState);
-};
+// const resetVariantForm = () => {
+//   Object.assign(variant, variantInitialState);
+// };
 
-const saveVariant = () => {
-  if (variantModal.value.type === "add") {
-    productData.variants.push({
-      ...variant,
-    });
-  }
+// const saveVariant = () => {
+//   if (variantModal.value.type === "add") {
+//     productData.variants.push({
+//       ...variant,
+//     });
+//   }
 
-  if (variantModal.value.type === "update") {
-    productData.variants[variantModal.value.editId] = { ...variant };
-  }
+//   if (variantModal.value.type === "update") {
+//     productData.variants[variantModal.value.editId] = { ...variant };
+//   }
 
-  resetVariantForm();
-  variantModal.value.shown = false;
-};
+//   resetVariantForm();
+//   variantModal.value.shown = false;
+// };
 
-const editVariant = (id) => {
-  Object.assign(variant, productData.variants[id]);
-  variantModal.value.shown = true;
-  variantModal.value.type = "update";
-  variantModal.value.editId = id;
-};
+// const editVariant = (id) => {
+//   Object.assign(variant, productData.variants[id]);
+//   variantModal.value.shown = true;
+//   variantModal.value.type = "update";
+//   variantModal.value.editId = id;
+// };
 
-const removeVariant = (index) => {
-  console.log("Received Index: ", index);
-  productData.variants.splice(index, 1);
-  $q.notify({
-    position: "top",
-    color: "green",
-    icon: "done_all",
-    message: "Product variant has been removed!",
-  });
-};
+// const removeVariant = (index) => {
+//   console.log("Received Index: ", index);
+//   productData.variants.splice(index, 1);
+//   $q.notify({
+//     position: "top",
+//     color: "green",
+//     icon: "done_all",
+//     message: "Product variant has been removed!",
+//   });
+// };
 
 const saveProduct = () => {
   products.value.unshift({
@@ -259,7 +256,7 @@ const saveProduct = () => {
   });
 
   $q.notify({
-    position: "top",
+    position: "bottom",
     color: "green",
     icon: "done_all",
     message: "Product added successfully!",

@@ -23,23 +23,32 @@
       </q-scroll-area>
 
       <div class="q-mt-sm"></div>
-      <q-scroll-area :style="`height: ${containerHeight}px`">
+      <q-scroll-area
+        :style="`height: ${containerHeight}px`"
+        v-if="products.length > 0"
+      >
         <div class="row">
           <div
             v-for="product in filteredData"
             :key="product.productName"
             class="col-6"
           >
-            <product-grid
-              :id="product.id"
-              :product-name="product.name"
-              :category="product.categories"
-              :price="formatCurrency(product.price)"
-              :qty="product.stocks"
-            />
+            <router-link :to="`/update-product/${product.id}`">
+              <product-grid
+                :id="product.id"
+                :product-name="product.name"
+                :category="product.categories"
+                :price="formatCurrency(product.price)"
+                :qty="product.stocks"
+              />
+            </router-link>
           </div>
         </div>
       </q-scroll-area>
+      <p v-else class="q-mt-md text-subtitle1 text-grey-6">
+        No products available. You may add your product by clicking the plus
+        icon
+      </p>
     </div>
 
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
