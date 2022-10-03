@@ -2,7 +2,7 @@
   <q-page class="q-pa-md md:q-pa-sm">
     <div ref="summary">
       <div>
-        <p class="text-h6">Hello, John Doe!</p>
+        <p class="text-h6">Hello, {{ settings?.storeName ?? "User!" }}</p>
         <p class="text-weight-regular text-subtitle1">
           Welcome, Here is your store summary.
         </p>
@@ -13,7 +13,7 @@
             <q-card-section horizontal class="items-center row justify-between">
               <q-card-section>
                 <p class="text-caption">Today's Sales</p>
-                <p class="text-h3 q-pt-sm">12,500</p>
+                <p class="text-h5 q-pt-sm">{{ formatCurrency(totalSales) }}</p>
               </q-card-section>
               <q-card-section>
                 <q-icon name="payments" size="72px" />
@@ -31,7 +31,7 @@
           >
             <q-card-section horizontal class="items-center row justify-between">
               <q-card-section>
-                <p class="text-h4">100</p>
+                <p class="text-h4">{{ products.length }}</p>
                 <p class="text-caption">Total Products</p>
               </q-card-section>
               <q-card-section>
@@ -44,7 +44,7 @@
           <q-card flat class="shadow-2 bg-red-7 text-white q-px-sm full-height">
             <q-card-section horizontal class="items-center row justify-between">
               <q-card-section>
-                <p class="text-h4">240</p>
+                <p class="text-h4">{{ lowStocks }}</p>
                 <p class="text-caption">Low Stocks</p>
               </q-card-section>
               <q-card-section>
@@ -117,14 +117,18 @@
 <script setup>
 import ProductList from "src/components/ProductList.vue";
 import { appRoute } from "src/router/constants";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useProduct } from "src/composable/products";
+import { useTransactions } from "src/composable/transactions";
 import { formatCurrency } from "../helpers/utilities";
+import { useAppSettings } from "src/composable/app-settings";
 
 import { dom } from "quasar";
 const { height } = dom;
 
+const settings = useAppSettings();
 const products = useProduct();
+const transactions = useTransactions();
 const scrollableTransaction = ref("");
 
 /** Element Refs */
@@ -142,5 +146,27 @@ onMounted(() => {
       NAV_HEIGHT +
       RECENT_HEADING_HEIGHT +
       OFFSET_HEIGHT);
+});
+
+let lowStocks = computed(() => {
+  let lowStocks = 0;
+  products.value.map((prod) => {
+    if (parseInt(prod.stocks) < parseInt(prod.lowLevelStock)) {
+      lowStocks += 1;
+    }
+  });
+
+  return lowStocks;
+});
+
+let totalSales = computed(() => {
+  let total = 0;
+
+  transactions.value.map((trans) => {
+    if (trans.totalAmount) {
+      total += parseFloat(trans.totalAmount);
+    }
+  });
+  return total;
 });
 </script>

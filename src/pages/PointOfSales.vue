@@ -154,12 +154,35 @@ const showAddtoCartModal = (product) => {
 };
 
 const addToCart = () => {
-  cart.value.unshift({
-    ...cartItem,
-    total: cartItem.qty * cartItem.price,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
+  let shouldUpdate = false;
+  let cartIndex = 0;
+
+  cart.value.map((item, index) => {
+    if (item.id == cartItem.id) {
+      cartIndex = index;
+      shouldUpdate = true;
+    }
   });
+
+  if (shouldUpdate) {
+    cart.value[cartIndex] = {
+      id: cart.value[cartIndex].id,
+      name: cart.value[cartIndex].name,
+      qty: parseInt(cart.value[cartIndex].qty) + parseInt(cartItem.qty),
+      price: cartItem.price,
+      total:
+        (parseInt(cart.value[cartIndex].qty) + parseInt(cartItem.qty)) *
+        parseInt(cartItem.price),
+      updatedAt: Date.now(),
+    };
+  } else {
+    cart.value.unshift({
+      ...cartItem,
+      total: cartItem.qty * cartItem.price,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    });
+  }
 
   $q.notify({
     position: "top",

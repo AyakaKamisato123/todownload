@@ -6,7 +6,6 @@
           padding="none"
           unelevated
           icon="arrow_back"
-          size="sm"
           @click.prevent="router.back()"
         ></q-btn>
         <q-toolbar-title class="px-none">

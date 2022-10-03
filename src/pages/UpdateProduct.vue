@@ -314,7 +314,7 @@ const updateProduct = () => {
   });
 
   $q.notify({
-    position: "bottom",
+    position: "top",
     color: "green",
     icon: "done_all",
     message: "Product updated successfully!",

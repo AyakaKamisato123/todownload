@@ -256,7 +256,7 @@ const saveProduct = () => {
   });
 
   $q.notify({
-    position: "bottom",
+    position: "top",
     color: "green",
     icon: "done_all",
     message: "Product added successfully!",
