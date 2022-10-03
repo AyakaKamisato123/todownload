@@ -194,6 +194,7 @@ const resetData = () => {
   isBtnLoading.value = true;
   localStorage.removeItem("products");
   localStorage.removeItem("app-settings");
+  localStorage.removeItem("transactions");
   setTimeout(() => {
     isBtnLoading.value = false;
     resetModalShown.value = false;

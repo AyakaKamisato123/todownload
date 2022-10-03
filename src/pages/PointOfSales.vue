@@ -5,9 +5,9 @@
       <q-scroll-area style="height: 50px; width: 100%">
         <div class="row no-wrap">
           <q-chip
-            v-for="categ in productCategories"
+            v-for="categ in reactiveCateg"
             :key="categ.id"
-            v-model:selected="selectedCategory"
+            v-model:selected="categ.isSelected"
             color="grey-6"
             text-color="white"
           >
@@ -66,17 +66,19 @@
             <p class="text-h6 text-weight-bold">Add To Cart</p>
             <p>How many would you like to add</p>
           </div>
-          <q-input
-            v-model="selectedProduct.name"
-            label="Product"
-            aria-disabled="true"
-            readonly
-          />
-          <q-input
-            v-model="cartItem.qty"
-            label="Quantity"
-            :rules="[maxQuantity]"
-          />
+          <q-form ref="cartModalForm">
+            <q-input
+              v-model="selectedProduct.name"
+              label="Product"
+              aria-disabled="true"
+              readonly
+            />
+            <q-input
+              v-model="cartItem.qty"
+              label="Quantity"
+              :rules="[maxQuantity]"
+            />
+          </q-form>
           <p>Max Quantity: {{ selectedProduct.stocks }}</p>
         </q-card-section>
         <q-card-actions align="right" class="q-mb-sm q-mt-md">
@@ -122,8 +124,17 @@ const $q = useQuasar();
 
 const cartItem = reactive({ qty: 0, total: 0, price: 0, name: "", id: null });
 
+const cartModalForm = ref("");
 const selectedProduct = ref({});
-const selectedCategory = ref(false);
+const reactiveCateg = reactive([...productCategories]);
+
+/* eslint-disable no-unused-vars */
+const selectedCateg = computed(() => {
+  return reactiveCateg
+    .filter((categ) => categ.isSelected == true)
+    .map((categ) => categ.id)
+    .join(", ");
+});
 /** Element Refs */
 const containerHeight = ref(200);
 
@@ -138,12 +149,43 @@ onMounted(() => {
 
 const filteredData = computed(() => {
   return filter.value.trim() !== ""
-    ? products.value.filter((data) => {
-        return data.name.toLowerCase().indexOf(filter.value.toLowerCase()) > -1;
-      })
-    : products.value;
-});
+    ? products.value
+        .filter((data) => {
+          return (
+            data.name.toLowerCase().indexOf(filter.value.toLowerCase()) > -1
+          );
+        })
+        .filter((data) => {
+          if (selectedCateg.value.length == 0) return data;
 
+          let hasMatch = false;
+
+          for (let i = 0; i < data.categories.length; i++) {
+            for (let j = 0; j < selectedCateg.value.length; j++) {
+              if (data.categories[i] == selectedCateg.value[j]) {
+                hasMatch = true;
+              }
+            }
+          }
+
+          return hasMatch && data;
+        })
+    : products.value.filter((data) => {
+        if (selectedCateg.value.length == 0) return data;
+
+        let hasMatch = false;
+
+        for (let i = 0; i < data.categories.length; i++) {
+          for (let j = 0; j < selectedCateg.value.length; j++) {
+            if (data.categories[i] == selectedCateg.value[j]) {
+              hasMatch = true;
+            }
+          }
+        }
+
+        return hasMatch && data;
+      });
+});
 const showAddtoCartModal = (product) => {
   cartItem.qty = 0;
   cartItem.name = product.name;
@@ -154,6 +196,13 @@ const showAddtoCartModal = (product) => {
 };
 
 const addToCart = () => {
+  cartModalForm.value.validate();
+
+  if (cartItem.qty == 0) {
+    addToCartModal.value = false;
+    return;
+  }
+
   let shouldUpdate = false;
   let cartIndex = 0;
 
@@ -165,6 +214,20 @@ const addToCart = () => {
   });
 
   if (shouldUpdate) {
+    if (
+      parseInt(cart.value[cartIndex].qty) + parseInt(cartItem.qty) >
+      selectedProduct.value.stocks
+    ) {
+      $q.notify({
+        position: "top",
+        color: "red",
+        icon: "close",
+        message: "Insufficient stocks",
+      });
+
+      return;
+    }
+
     cart.value[cartIndex] = {
       id: cart.value[cartIndex].id,
       name: cart.value[cartIndex].name,

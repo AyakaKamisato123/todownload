@@ -3,8 +3,9 @@
     <q-footer bordered class="bg-white text-primary">
       <q-tabs
         no-caps
+        dense
         active-color="primary"
-        indicator-color="transparent"
+        indicator-color="primary"
         class="text-grey"
       >
         <q-route-tab
@@ -42,3 +43,8 @@
 <script setup>
 import { appRoute } from "src/router/constants";
 </script>
+<style>
+.q-tab__icon {
+  font-size: 20px !important;
+}
+</style>

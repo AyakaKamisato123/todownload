@@ -11,9 +11,9 @@
       <q-scroll-area style="height: 50px; width: 100%">
         <div class="row no-wrap">
           <q-chip
-            v-for="categ in productCategories"
+            v-for="categ in reactiveCateg"
             :key="categ.id"
-            v-model:selected="selectedCategory"
+            v-model:selected="categ.isSelected"
             color="grey-6"
             text-color="white"
           >
@@ -61,16 +61,25 @@ import { appRoute } from "src/router/constants";
 import { productCategories } from "src/helpers/categories";
 import ProductGrid from "src/components/ProductGrid.vue";
 import { useProduct } from "src/composable/products";
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, reactive } from "vue";
 import { formatCurrency } from "../helpers/utilities";
 
 import { dom } from "quasar";
 const { height } = dom;
 
 const filter = ref("");
+const reactiveCateg = reactive([...productCategories]);
+
+/* eslint-disable no-unused-vars */
+const selectedCateg = computed(() => {
+  return reactiveCateg
+    .filter((categ) => categ.isSelected == true)
+    .map((categ) => categ.id)
+    .join(", ");
+});
+
 const products = useProduct();
 
-const selectedCategory = ref(false);
 /** Element Refs */
 const containerHeight = ref(200);
 
@@ -84,9 +93,41 @@ onMounted(() => {
 
 const filteredData = computed(() => {
   return filter.value.trim() !== ""
-    ? products.value.filter((data) => {
-        return data.name.toLowerCase().indexOf(filter.value.toLowerCase()) > -1;
-      })
-    : products.value;
+    ? products.value
+        .filter((data) => {
+          return (
+            data.name.toLowerCase().indexOf(filter.value.toLowerCase()) > -1
+          );
+        })
+        .filter((data) => {
+          if (selectedCateg.value.length == 0) return data;
+
+          let hasMatch = false;
+
+          for (let i = 0; i < data.categories.length; i++) {
+            for (let j = 0; j < selectedCateg.value.length; j++) {
+              if (data.categories[i] == selectedCateg.value[j]) {
+                hasMatch = true;
+              }
+            }
+          }
+
+          return hasMatch && data;
+        })
+    : products.value.filter((data) => {
+        if (selectedCateg.value.length == 0) return data;
+
+        let hasMatch = false;
+
+        for (let i = 0; i < data.categories.length; i++) {
+          for (let j = 0; j < selectedCateg.value.length; j++) {
+            if (data.categories[i] == selectedCateg.value[j]) {
+              hasMatch = true;
+            }
+          }
+        }
+
+        return hasMatch && data;
+      });
 });
 </script>

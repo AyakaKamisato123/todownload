@@ -166,10 +166,7 @@
     <q-dialog v-model="summary" seamless position="bottom" class="">
       <q-card
         class="full-width fragment-radius"
-        @click.prevent="
-          summary = false;
-          checkoutModal = true;
-        "
+        @click.prevent="proceedCheckout"
       >
         <q-linear-progress :value="0.8" color="blue" />
         <q-card-section class="row items-center no-wrap q-pt-sm q-pb-md">
@@ -311,7 +308,7 @@ let grandTotal = computed(
     parseFloat(subTotal.value) + parseFloat(transactionData.deliveryFee ?? 0)
 );
 
-const padNumber = (val) => val.toString().padStart(7, 0);
+const padNumber = (val) => val.toString().padStart(6, 0);
 
 const amountReceived = [
   (v) =>
@@ -351,7 +348,7 @@ const checkoutTransaction = () => {
           position: "top",
           color: "green",
           icon: "done_all",
-          message: "Transaction has been successful",
+          message: "Transaction is successful!",
         });
 
         cart.value = [];
@@ -368,6 +365,21 @@ const checkoutTransaction = () => {
       });
     }
   });
+};
+
+const proceedCheckout = () => {
+  console.log(cart.value.length);
+  if (cart.value.length == 0) {
+    $q.notify({
+      position: "top",
+      color: "red",
+      icon: "done_all",
+      message: "Error! No Items to checkout",
+    });
+  } else {
+    summary.value = false;
+    checkoutModal.value = true;
+  }
 };
 </script>
 

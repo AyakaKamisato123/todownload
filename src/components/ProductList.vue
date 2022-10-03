@@ -2,7 +2,7 @@
   <q-list>
     <q-item class="q-px-none q-gutter-sm">
       <img
-        src="https://via.placeholder.com/150"
+        src="../assets/images/img-placeholder.png"
         alt=""
         height="50"
         width="50"

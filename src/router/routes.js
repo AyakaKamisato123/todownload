@@ -74,6 +74,19 @@ const routes = [
     ],
   },
 
+  {
+    path: "/transaction",
+    component: () => import("layouts/PageStack.vue"),
+    redirect: { name: appRoute.VIEW_TRANSACTION },
+    children: [
+      {
+        path: ":id",
+        name: appRoute.VIEW_TRANSACTION,
+        component: () => import("pages/TransactionSummary.vue"),
+      },
+    ],
+  },
+
   // Always leave this as last one,
   // but you can also remove it
   {

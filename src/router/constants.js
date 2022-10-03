@@ -10,4 +10,5 @@ export const appRoute = {
   CHECKOUT_SUCCESS: "CheckoutSuccess",
   PRODUCTS: "Product",
   POINT_OF_SALES: "Point of Sales",
+  VIEW_TRANSACTION: "Transaction",
 };

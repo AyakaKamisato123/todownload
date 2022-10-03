@@ -43,3 +43,20 @@ h6 {
 .q-pb-fragment {
   padding-bottom: 80px;
 }
+
+.text-subtitle1 {
+  line-height: 1.35rem;
+}
+
+.q-item--active {
+  background-color: #1976d223;
+  font-weight: 600;
+}
+
+.text-decoration-none {
+  text-decoration: none;
+}
+
+.q-chip--selected {
+  background-color: $primary !important;
+}

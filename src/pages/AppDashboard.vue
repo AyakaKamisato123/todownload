@@ -57,25 +57,37 @@
 
       <div class="row q-mt-sm">
         <div class="col-12">
-          <q-card flat class="shadow-2 bg-purple-7 text-white q-px-sm">
-            <q-card-section horizontal class="items-center row justify-between">
-              <q-card-section class="q-pa-md row">
-                <div class="q-ml-lg">
-                  <q-icon name="point_of_sales" size="48px" />
-                </div>
-                <div class="col">
-                  <p class="text-h6">Point of Sales</p>
-                  <p class="text-caption">Sales and payments</p>
-                </div>
+          <router-link
+            :to="{ name: 'Point of Sales' }"
+            class="text-decoration-none"
+          >
+            <q-card
+              flat
+              v-ripple
+              class="shadow-2 bg-purple-7 text-white q-px-sm relative-position"
+            >
+              <q-card-section
+                horizontal
+                class="items-center row justify-between"
+              >
+                <q-card-section class="q-pa-md row">
+                  <div class="q-ml-lg">
+                    <q-icon name="point_of_sales" size="48px" />
+                  </div>
+                  <div class="col">
+                    <p class="text-h6">Point of Sales</p>
+                    <p class="text-caption">Sales and payments</p>
+                  </div>
+                </q-card-section>
+                <q-btn
+                  icon="arrow_forward"
+                  unelevated
+                  :to="{ name: 'Point of Sales' }"
+                  rounded
+                ></q-btn>
               </q-card-section>
-              <q-btn
-                icon="arrow_forward"
-                unelevated
-                :to="{ name: 'Point of Sales' }"
-                rounded
-              ></q-btn>
-            </q-card-section>
-          </q-card>
+            </q-card>
+          </router-link>
         </div>
       </div>
     </div>
@@ -122,6 +134,7 @@ import { useProduct } from "src/composable/products";
 import { useTransactions } from "src/composable/transactions";
 import { formatCurrency } from "../helpers/utilities";
 import { useAppSettings } from "src/composable/app-settings";
+import moment from "moment";
 
 import { dom } from "quasar";
 const { height } = dom;
@@ -151,7 +164,7 @@ onMounted(() => {
 let lowStocks = computed(() => {
   let lowStocks = 0;
   products.value.map((prod) => {
-    if (parseInt(prod.stocks) < parseInt(prod.lowLevelStock)) {
+    if (parseInt(prod.stocks) <= parseInt(prod.lowLevelStock)) {
       lowStocks += 1;
     }
   });
@@ -164,7 +177,9 @@ let totalSales = computed(() => {
 
   transactions.value.map((trans) => {
     if (trans.totalAmount) {
-      total += parseFloat(trans.totalAmount);
+      if (moment(trans.createdAt).isSame(moment(), "day")) {
+        total += parseFloat(trans.totalAmount);
+      }
     }
   });
   return total;

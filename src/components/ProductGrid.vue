@@ -1,12 +1,7 @@
 <template>
-  <div class="relative-position rounded-borders">
-    <!-- <div v-if="productVariants > 0" class="absolute q-ma-sm">
-      <q-chip color="primary" size="sm" class="text-white"
-        >+{{ productVariants }} variant</q-chip
-      >
-    </div> -->
+  <div class="relative-position rounded-borders q-mr-sm">
     <img
-      src="https://via.placeholder.com/240"
+      src="../assets/images/img-placeholder.png"
       alt=""
       class="img-fluid rounded-borders"
     />

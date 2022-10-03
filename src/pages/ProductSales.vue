@@ -27,12 +27,13 @@
         <p class="font-weight-bold text-h6">Transactions</p>
         <p>Shown on the table are all your transactions</p>
         <q-table
-          class="q-mt-md"
+          class="q-mt-md sticky-sales-table"
           flat
           title=""
           :columns="columns"
           :rows="transactions"
           row-key="name"
+          @row-click="viewTransaction"
         />
       </div>
     </div>
@@ -42,7 +43,10 @@
 import { computed } from "vue";
 import { useTransactions } from "src/composable/transactions";
 import { formatCurrency } from "../helpers/utilities";
+import { useRouter } from "vue-router";
 import moment from "moment";
+
+const router = useRouter();
 const transactions = useTransactions();
 
 const columns = [
@@ -50,33 +54,33 @@ const columns = [
     name: "id",
     label: "ID",
     align: "left",
-    field: (row) => row.id,
+    field: (row) => padNumber(row.id),
     sortable: true,
   },
   {
     name: "totalitems",
-    label: "# of Items",
+    label: "ITEMS",
     align: "left",
     field: (row) => row.items.length,
     sortable: true,
   },
   {
     name: "deliveryfee",
-    label: "Delivery Fee",
+    label: "DELIVERY FEE",
     align: "left",
-    field: (row) => row.deliveryFee,
+    field: (row) => formatCurrency(row.deliveryFee),
     sortable: true,
   },
   {
     name: "totalamount",
-    label: "Total",
+    label: "TOTAL",
     align: "left",
-    field: (row) => row.totalAmount,
+    field: (row) => formatCurrency(row.totalAmount),
     sortable: true,
   },
   {
     name: "date",
-    label: "Date",
+    label: "DATE",
     align: "left",
     field: (row) => moment(row.createdAt).format("MMMM Do YYYY, h:mm A"),
     sortable: true,
@@ -92,4 +96,31 @@ let totalSales = computed(() => {
   });
   return total;
 });
+
+const padNumber = (val) => val.toString().padStart(6, 0);
+
+//es-lint-no-unused-var
+const viewTransaction = (evt, row) => {
+  router.push(`/transaction/${row.id}`);
+};
 </script>
+
+<style lang="scss">
+.sticky-sales-table {
+  max-width: 600px;
+
+  & thead tr:first-child th:first-child {
+    /* bg color is important for th; just specify one */
+    background-color: #fff;
+  }
+  & td:first-child {
+    background-color: #dce3f5;
+  }
+  & th:first-child,
+  td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+  }
+}
+</style>
