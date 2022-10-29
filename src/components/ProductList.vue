@@ -2,6 +2,13 @@
   <q-list>
     <q-item class="q-px-none q-gutter-sm">
       <img
+        v-if="filePath"
+        :src="filePath"
+        alt=""
+        class="img-list rounded-borders"
+      />
+      <img
+        v-else
         src="../assets/images/img-placeholder.png"
         alt=""
         height="50"
@@ -23,10 +30,10 @@
               >
                 {{ categ.category }}
               </q-chip>
-              <q-chip size="sm" v-if="mappedCategory.length > 0">
+              <q-chip v-if="mappedCategory.length > 0" size="sm">
                 +{{ mappedCategory.length - 1 }} Categories
               </q-chip>
-              <q-chip size="sm" v-else>Uncategorized</q-chip>
+              <q-chip v-else size="sm">Uncategorized</q-chip>
             </q-item-label>
           </div>
         </div>
@@ -42,7 +49,14 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { productCategories } from "src/helpers/categories";
+import {
+  Filesystem,
+  FilesystemDirectory,
+  FilesystemEncoding,
+} from "@capacitor/core";
+
 const mappedCategory = ref([]);
+const filePath = ref("");
 
 const props = defineProps({
   productName: {
@@ -51,6 +65,7 @@ const props = defineProps({
   },
   category: {
     type: [String, Array],
+    default: null,
     required: false,
   },
   price: {
@@ -61,11 +76,29 @@ const props = defineProps({
     type: [Number, String],
     required: true,
   },
+  image: {
+    type: String,
+    required: false,
+  },
 });
 
-onMounted(() => {
+const fileRead = async (file) => {
+  let content = await Filesystem.readFile({
+    path: `products/${file}`,
+    directory: FilesystemDirectory.Documents,
+    encoding: FilesystemEncoding.UTF8,
+  });
+
+  return content;
+};
+
+onMounted(async () => {
   mappedCategory.value = productCategories.filter((categ) =>
     props.category?.includes(categ.id)
   );
+
+  if (!props.image) return;
+  const res = await fileRead(props.image);
+  filePath.value = `data:image/jpeg;base64,${res.data}`;
 });
 </script>

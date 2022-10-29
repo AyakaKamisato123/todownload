@@ -1,6 +1,6 @@
 {
-  "appId": "org.capacitor.quasar.app",
-  "appName": "E-Inventory",
+  "appId": "org.ims.quasar.app",
+  "appName": "IMS",
   "bundledWebRuntime": false,
   "npmClient": "npm",
   "webDir": "www"

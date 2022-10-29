@@ -2,6 +2,15 @@ import { appRoute } from "./constants";
 
 const routes = [
   {
+    path: "/authenticate",
+    name: appRoute.AUTHENTICATE,
+    component: () => import("src/layouts/PageAuth.vue"),
+    meta: {
+      requiresAuth: false,
+    },
+  },
+
+  {
     path: "/",
     component: () => import("layouts/MainLayout.vue"),
     redirect: { name: appRoute.DASHBOARD },
@@ -27,7 +36,15 @@ const routes = [
         name: appRoute.SETTINGS,
         component: () => import("pages/AppSettings.vue"),
       },
+      {
+        path: "logs",
+        name: appRoute.LOGS,
+        component: () => import("pages/ActivityLog.vue"),
+      },
     ],
+    meta: {
+      requiresAuth: true,
+    },
   },
 
   {
@@ -46,6 +63,9 @@ const routes = [
         component: () => import("pages/UpdateProduct.vue"),
       },
     ],
+    meta: {
+      requiresAuth: true,
+    },
   },
 
   {
@@ -59,6 +79,9 @@ const routes = [
         component: () => import("pages/PointOfSales.vue"),
       },
     ],
+    meta: {
+      requiresAuth: true,
+    },
   },
 
   {
@@ -72,6 +95,9 @@ const routes = [
         component: () => import("pages/CartItems.vue"),
       },
     ],
+    meta: {
+      requiresAuth: true,
+    },
   },
 
   {
@@ -85,6 +111,9 @@ const routes = [
         component: () => import("pages/TransactionSummary.vue"),
       },
     ],
+    meta: {
+      requiresAuth: true,
+    },
   },
 
   // Always leave this as last one,

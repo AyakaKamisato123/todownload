@@ -110,6 +110,7 @@
             :key="product.productName"
             :product-name="product.name"
             :category="product.categories"
+            :image="product.file"
             :price="formatCurrency(product.price)"
             :qty="product.stocks"
           />

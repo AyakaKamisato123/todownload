@@ -67,7 +67,7 @@
         <p class="text-weight-bold text-h6">
           Customer Details <span class="text-caption">(Optional)</span>
         </p>
-        <p>Here are some other options you can do</p>
+        <p>Here is the info for your customer</p>
         <div class="q-mt-md">
           <q-input
             v-model="transactionData.name"
@@ -77,6 +77,7 @@
           <q-input
             v-model="transactionData.contact_number"
             label="Contact Number"
+            readonly
           ></q-input>
           <q-input
             v-model="transactionData.address"
@@ -90,9 +91,27 @@
 
       <div>
         <p class="text-weight-bold text-h6">
+          Delivery <span class="text-caption">(Optional)</span>
+        </p>
+        <p>Delivery address added</p>
+        <div>
+          <q-input
+            v-model="transactionData.deliveryAddress"
+            type="textarea"
+            auto-grow
+            label="Delivery Address"
+            readonly
+          ></q-input>
+        </div>
+      </div>
+
+      <hr class="q-mt-lg q-mb-lg" />
+
+      <div>
+        <p class="text-weight-bold text-h6">
           Transaction Notes <span class="text-caption">(Optional)</span>
         </p>
-        <p>Add some notes if necessary</p>
+        <p>Notes for this transaction</p>
         <div>
           <q-input
             v-model="transactionData.notes"

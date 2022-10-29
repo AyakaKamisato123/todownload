@@ -215,6 +215,7 @@ import { reactive, ref, onMounted } from "vue";
 // import ProductVariant from "src/components/ProductVariant.vue";
 import { fieldRequired } from "../helpers/fieldRules";
 import { useProduct } from "../composable/products";
+import { useLogs } from "../composable/activitylog";
 import { useQuasar } from "quasar";
 import { useRouter, useRoute } from "vue-router";
 import { productCategories } from "src/helpers/categories";
@@ -225,6 +226,7 @@ const $q = useQuasar();
 const router = useRouter();
 const route = useRoute();
 
+const logs = useLogs();
 const products = useProduct();
 const form = ref(null);
 
@@ -313,6 +315,16 @@ const updateProduct = () => {
     }
   });
 
+  logs.value.unshift({
+    id: logs.value.length + 1,
+    name: "Product Updated",
+    description: `Product ${productData.name} was successfully updated.`,
+    productId: productData.id,
+    type: "updated",
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+  });
+
   $q.notify({
     position: "top",
     color: "green",
@@ -326,6 +338,16 @@ const updateProduct = () => {
 const deleteProduct = () => {
   isBtnLoading.value = true;
   products.value.splice(indexOf.value, 1);
+
+  logs.value.unshift({
+    id: logs.value.length + 1,
+    name: "Product Deleted",
+    description: `Product ${productData.name} was recently deleted`,
+    type: "deleted",
+    productId: productData.id,
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+  });
 
   setTimeout(() => {
     isBtnLoading.value = false;

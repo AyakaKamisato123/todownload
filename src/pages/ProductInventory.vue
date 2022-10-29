@@ -14,7 +14,7 @@
             v-for="categ in reactiveCateg"
             :key="categ.id"
             v-model:selected="categ.isSelected"
-            color="grey-6"
+            color="grey-5"
             text-color="white"
           >
             {{ categ.category }}
@@ -22,7 +22,9 @@
         </div>
       </q-scroll-area>
 
-      <div class="q-mt-sm"></div>
+      <div class="q-my-sm row justify-end">
+        <q-checkbox v-model="lowStocks" label="Low Stocks" color="red" />
+      </div>
       <q-scroll-area
         :style="`height: ${containerHeight}px`"
         v-if="products.length > 0"
@@ -39,6 +41,7 @@
                 :product-name="product.name"
                 :category="product.categories"
                 :price="formatCurrency(product.price)"
+                :image="product.file"
                 :qty="product.stocks"
               />
             </router-link>
@@ -68,6 +71,7 @@ import { dom } from "quasar";
 const { height } = dom;
 
 const filter = ref("");
+const lowStocks = ref(false);
 const reactiveCateg = reactive([...productCategories]);
 
 /* eslint-disable no-unused-vars */
@@ -86,6 +90,7 @@ const containerHeight = ref(200);
 const OFFSET_HEIGHT = 55;
 const TOP_EL_HEIGHT = 32 + 28 + 56 + 20 + 36; //Heading and subheading
 const BOTTOM_NAV = 72;
+
 onMounted(() => {
   containerHeight.value =
     height(window) - (TOP_EL_HEIGHT + OFFSET_HEIGHT + BOTTOM_NAV);
@@ -114,20 +119,31 @@ const filteredData = computed(() => {
 
           return hasMatch && data;
         })
-    : products.value.filter((data) => {
-        if (selectedCateg.value.length == 0) return data;
+        .filter((data) => {
+          return lowStocks.value
+            ? parseFloat(data.stocks) <= parseFloat(data.lowLevelStock)
+            : true;
+        })
+    : products.value
+        .filter((data) => {
+          if (selectedCateg.value.length == 0) return data;
 
-        let hasMatch = false;
+          let hasMatch = false;
 
-        for (let i = 0; i < data.categories.length; i++) {
-          for (let j = 0; j < selectedCateg.value.length; j++) {
-            if (data.categories[i] == selectedCateg.value[j]) {
-              hasMatch = true;
+          for (let i = 0; i < data.categories.length; i++) {
+            for (let j = 0; j < selectedCateg.value.length; j++) {
+              if (data.categories[i] == selectedCateg.value[j]) {
+                hasMatch = true;
+              }
             }
           }
-        }
 
-        return hasMatch && data;
-      });
+          return hasMatch && data;
+        })
+        .filter((data) => {
+          return lowStocks.value
+            ? parseFloat(data.stocks) <= parseFloat(data.lowLevelStock)
+            : true;
+        });
 });
 </script>

@@ -101,7 +101,10 @@
             v-model="transactionData.contact_number"
             label="Contact Number"
           ></q-input>
-          <q-input v-model="transactionData.address" label="Address"></q-input>
+          <q-input
+            v-model="transactionData.deliveryAddress"
+            label="Delivery Address"
+          ></q-input>
         </div>
       </div>
 
@@ -189,18 +192,22 @@
               Please set the price and delivery address for the customer
             </div>
             <div class="q-mt-md">
-              <q-input
-                v-model="transactionData.deliveryFee"
-                label="Delivery Fee"
-                autogrow
-              ></q-input>
-              <q-input
-                v-model="transactionData.deliveryAddress"
-                type="textarea"
-                label="Delivery Address"
-                :rules="fieldRequired"
-                autogrow
-              ></q-input>
+              <q-form ref="deliveryForm" @submit="setDelivery">
+                <q-input
+                  type="number"
+                  step="any"
+                  v-model="orderDelivery.deliveryFee"
+                  label="Delivery Fee"
+                  :rules="fieldRequired"
+                ></q-input>
+                <q-input
+                  v-model="orderDelivery.deliveryAddress"
+                  type="textarea"
+                  label="Delivery Address"
+                  :rules="fieldRequired"
+                  autogrow
+                ></q-input>
+              </q-form>
             </div>
           </div>
         </q-card-section>
@@ -208,9 +215,16 @@
           <q-btn
             flat
             label="Close"
-            color="primary"
+            color="gray"
             :disable="isBtnLoading"
             @click="deliveryFeeModal = false"
+          />
+          <q-btn
+            flat
+            label="Save"
+            color="green"
+            :disable="isBtnLoading"
+            @click="deliveryForm.submit()"
           />
         </q-card-actions>
       </q-card>
@@ -223,12 +237,30 @@ import { formatCurrency } from "../helpers/utilities";
 import { useCart } from "src/composable/cart";
 import { useTransactions } from "src/composable/transactions";
 import { useProduct } from "src/composable/products";
+import { useLogs } from "../composable/activitylog";
 import { fieldRequired } from "src/helpers/fieldRules";
 import moment from "moment";
 import { useRouter } from "vue-router";
 import { useQuasar } from "quasar";
 
 const router = useRouter();
+
+const orderDelivery = reactive({
+  deliveryFee: 0,
+  deliveryAddress: "",
+});
+
+const setDelivery = () => {
+  transactionData.deliveryFee = orderDelivery.deliveryFee;
+  transactionData.deliveryAddress = orderDelivery.deliveryAddress;
+  deliveryFeeModal.value = false;
+  $q.notify({
+    position: "top",
+    color: "green",
+    icon: "done_all",
+    message: "Delivery has been set",
+  });
+};
 
 const transactionData = reactive({
   name: "",
@@ -245,7 +277,9 @@ const deliveryFeeModal = ref(false);
 const checkoutModal = ref(false);
 const summary = ref(true);
 const isBtnLoading = ref(false);
+const deliveryForm = ref(false);
 const checkoutBtnDisabled = ref(false);
+const logs = useLogs();
 const checkoutForm = ref("");
 
 const columns = [
@@ -343,6 +377,18 @@ const checkoutTransaction = () => {
         updatedAt: Date.now(),
       });
 
+      logs.value.unshift({
+        id: logs.value.length + 1,
+        name: "Transaction Successful",
+        type: "sales",
+        description: `Transaction ID: ${
+          transactions.value.length + 1
+        }. You have successfully sold ${
+          cart.value.length
+        } items with a total amount of ${grandTotal.value}.`,
+        createdAt: Date.now(),
+      });
+
       setTimeout(() => {
         $q.notify({
           position: "top",
@@ -354,7 +400,7 @@ const checkoutTransaction = () => {
         cart.value = [];
         isBtnLoading.value = false;
 
-        router.push("/");
+        router.push("/dashboard");
       }, 1000);
     } else {
       $q.notify({
@@ -368,7 +414,6 @@ const checkoutTransaction = () => {
 };
 
 const proceedCheckout = () => {
-  console.log(cart.value.length);
   if (cart.value.length == 0) {
     $q.notify({
       position: "top",

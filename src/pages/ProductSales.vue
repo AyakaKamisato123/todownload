@@ -22,6 +22,30 @@
           </q-card>
         </div>
       </div>
+      <div class="row q-gutter-sm" style="margin-top: 1px">
+        <div class="col">
+          <q-card flat class="shadow-2 bg-purple-7 text-white q-px-sm">
+            <q-card-section horizontal class="items-center row justify-between">
+              <q-card-section>
+                <p class="text-caption">Weekly Sales</p>
+                <p class="text-h6 q-pt-sm">{{ formatCurrency(weeklySales) }}</p>
+              </q-card-section>
+            </q-card-section>
+          </q-card>
+        </div>
+        <div class="col">
+          <q-card flat class="shadow-2 bg-black text-white q-px-sm">
+            <q-card-section horizontal class="items-center row justify-between">
+              <q-card-section>
+                <p class="text-caption">Monthly Sales</p>
+                <p class="text-h6 q-pt-sm">
+                  {{ formatCurrency(monthlySales) }}
+                </p>
+              </q-card-section>
+            </q-card-section>
+          </q-card>
+        </div>
+      </div>
 
       <div class="q-mt-md">
         <p class="font-weight-bold text-h6">Transactions</p>
@@ -86,6 +110,7 @@ const columns = [
     sortable: true,
   },
 ];
+
 let totalSales = computed(() => {
   let total = 0;
 
@@ -95,6 +120,35 @@ let totalSales = computed(() => {
     }
   });
   return total;
+});
+
+const weeklySales = computed(() => {
+  let weeklyTotal = 0;
+  transactions.value.map((trans) => {
+    if (trans.totalAmount) {
+      if (moment(trans.createdAt).isSameOrAfter(moment().subtract(1, "week"))) {
+        weeklyTotal += parseFloat(trans.totalAmount);
+      }
+    }
+  });
+
+  return weeklyTotal;
+});
+
+const monthlySales = computed(() => {
+  let monthlyTotal = 0;
+
+  transactions.value.map((trans) => {
+    if (trans.totalAmount) {
+      if (
+        moment(trans.createdAt).isSameOrAfter(moment().subtract(1, "month"))
+      ) {
+        monthlyTotal += parseFloat(trans.totalAmount);
+      }
+    }
+  });
+
+  return monthlyTotal;
 });
 
 const padNumber = (val) => val.toString().padStart(6, 0);

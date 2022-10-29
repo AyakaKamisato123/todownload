@@ -6,6 +6,12 @@
     </div>
     <q-form ref="form" @submit="saveProduct">
       <div class="q-gutter-sm">
+        <input
+          type="file"
+          class="q-mt-lg"
+          accept="image/*"
+          @change="onImageSelect"
+        />
         <q-input
           v-model="productData.name"
           label="Product Label"
@@ -41,6 +47,7 @@
               v-model="productData.price"
               type="number"
               label="Price"
+              step="any"
               :rules="fieldRequired"
             />
           </div>
@@ -49,6 +56,7 @@
               v-model="productData.stocks"
               type="number"
               label="Stocks"
+              step="any"
               :rules="fieldRequired"
             />
           </div>
@@ -59,6 +67,7 @@
               v-model="productData.cost"
               type="number"
               label="Product Cost"
+              step="any"
               :rules="fieldRequired"
             />
           </div>
@@ -67,6 +76,7 @@
               v-model="productData.lowLevelStock"
               type="number"
               label="Low Level"
+              step="any"
               :rules="fieldRequired"
             />
           </div>
@@ -173,10 +183,12 @@
   </q-page>
 </template>
 <script setup>
-import { reactive, ref } from "vue";
+import { reactive, ref, onMounted } from "vue";
 // import ProductVariant from "src/components/ProductVariant.vue";
+import { Filesystem, FilesystemDirectory } from "@capacitor/core";
 import { fieldRequired } from "../helpers/fieldRules";
 import { useProduct } from "../composable/products";
+import { useLogs } from "../composable/activitylog";
 import { useQuasar } from "quasar";
 import { useRouter } from "vue-router";
 import { productCategories } from "src/helpers/categories";
@@ -185,15 +197,18 @@ import { productCategories } from "src/helpers/categories";
 const $q = useQuasar();
 const router = useRouter();
 
+const logs = useLogs();
 const products = useProduct();
 const form = ref(null);
+// const dataDir = ref(null);
 
 const initialState = {
   id: products.value.length + 1,
   name: "",
-  category: "",
+  categories: [],
   description: "",
   unit: "",
+  image: "",
   price: "",
   stocks: "",
   cost: "",
@@ -208,6 +223,7 @@ const initialState = {
 //   qty: 0,
 // };
 
+const productImage = reactive({ image: null, filename: "", img_data: null });
 const productData = reactive({ ...initialState });
 // const variant = reactive({ ...variantInitialState });
 
@@ -248,11 +264,24 @@ const productData = reactive({ ...initialState });
 //   });
 // };
 
-const saveProduct = () => {
+const saveProduct = async () => {
+  await writeFile();
+
   products.value.unshift({
     ...productData,
+    file: productImage.filename,
+    path: productImage.path,
     createdAt: Date.now(),
     updatedAt: Date.now(),
+  });
+
+  logs.value.unshift({
+    id: logs.value.length + 1,
+    name: "Product Added",
+    description: `Product ${productData.name} was recently added with an initial stocks of ${productData.stocks}.`,
+    type: "added",
+    productId: productData.id,
+    createdAt: Date.now(),
   });
 
   $q.notify({
@@ -262,6 +291,62 @@ const saveProduct = () => {
     message: "Product added successfully!",
   });
 
-  router.push("/");
+  router.push("/dashboard");
 };
+
+const mkdir = async () => {
+  try {
+    await Filesystem.mkdir({
+      path: "products",
+      directory: FilesystemDirectory.Documents,
+      recursive: false,
+    });
+  } catch (e) {
+    // alert("Unable to make directory", e);
+  }
+};
+
+const writeFile = async () => {
+  if (!productImage.img_data) return;
+
+  try {
+    await Filesystem.writeFile({
+      path: `products/${productImage.filename}`,
+      data: productImage.img_data,
+      directory: FilesystemDirectory.Documents,
+    });
+  } catch (e) {
+    console.log("Error: ", e);
+  }
+
+  // const finalPhotoUri = await Filesystem.getUri({
+  //   directory: FilesystemDirectory.Documents,
+  //   path: productImage.filename,
+  // });
+
+  // productImage.path = finalPhotoUri;
+};
+
+const onImageSelect = async (e) => {
+  const file = e.target.files[0];
+  productImage.image = file;
+
+  const reader = new FileReader();
+
+  reader.onloadend = function () {
+    productImage.img_data = reader.result;
+    console.log("Res: ", reader.result);
+  };
+
+  reader.readAsDataURL(file);
+
+  const ext = productImage.image.name.split(".").pop();
+  productImage.filename = new Date().getTime() + "." + ext;
+
+  console.log(ext, productImage);
+};
+
+onMounted(async () => {
+  await mkdir();
+});
 </script>

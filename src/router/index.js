@@ -1,4 +1,5 @@
 import { route } from "quasar/wrappers";
+import { useAppPass } from "src/composable/app-pass";
 import {
   createRouter,
   createMemoryHistory,
@@ -31,6 +32,16 @@ export default route(function (/* { store, ssrContext } */) {
     // quasar.conf.js -> build -> vueRouterMode
     // quasar.conf.js -> build -> publicPath
     history: createHistory(process.env.VUE_ROUTER_BASE),
+  });
+
+  Router.beforeEach(async (to, from, next) => {
+    const appPass = useAppPass();
+
+    if (to.meta.requiresAuth && !appPass.value[0]?.authenticated) {
+      next("/authenticate");
+    } else {
+      next();
+    }
   });
 
   return Router;

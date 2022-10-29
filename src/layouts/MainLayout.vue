@@ -10,7 +10,7 @@
       >
         <q-route-tab
           name="dashboard"
-          label="Dashboard"
+          label="Home"
           icon="dashboard"
           :to="{ name: appRoute.DASHBOARD }"
         />
@@ -27,10 +27,16 @@
           :to="{ name: appRoute.SALES_HISTORY }"
         />
         <q-route-tab
+          name="logs"
+          label="Logs"
+          icon="update"
+          :to="{ name: appRoute.LOGS }"
+        />
+        <q-route-tab
           name="settings"
-          label="Settings"
+          label="Config"
           icon="settings"
-          to="/settings"
+          :to="{ name: appRoute.SETTINGS }"
         />
       </q-tabs>
     </q-footer>
