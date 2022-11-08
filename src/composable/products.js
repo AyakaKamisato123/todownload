@@ -1,4 +1,4 @@
-import { ref, watch, onMounted, onUnmounted } from "vue";
+import { ref, watch, onMounted } from "vue";
 
 export const useLocalStorage = (key, defaultValue) => {
   const data = ref(defaultValue);
@@ -11,10 +11,6 @@ export const useLocalStorage = (key, defaultValue) => {
   readData();
 
   onMounted(() => {
-    window.addEventListener("storage", readData);
-  });
-
-  onUnmounted(() => {
     window.addEventListener("storage", readData);
   });
 

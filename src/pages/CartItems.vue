@@ -21,7 +21,32 @@
           :columns="columns"
           :rows="cart"
           row-key="name"
-        />
+        >
+          <template #body-cell-actions="props">
+            <q-td key="actions">
+              <q-btn
+                unelevated
+                icon="edit"
+                size="20"
+                text-color="primary"
+                @click.prevent="
+                  selectedProduct = JSON.parse(JSON.stringify(props.row));
+                  updateProductModal = true;
+                "
+              />
+              <q-btn
+                unelevated
+                icon="delete"
+                size="20"
+                text-color="red"
+                @click.prevent="
+                  productID = props.row.id;
+                  removeProductModal = true;
+                "
+              />
+            </q-td>
+          </template>
+        </q-table>
       </div>
       <div class="row">
         <div class="col-5"></div>
@@ -183,6 +208,61 @@
       </q-card>
     </q-dialog>
 
+    <q-dialog v-model="removeProductModal" class="">
+      <q-card class="full-width fragment-radius">
+        <q-card-section class="q-pt-md q-pb-md">
+          <div class="text-weight-bold text-h6">Confirm Delete</div>
+          <div class="">
+            Are you sure you want to remove this product from your cart?
+          </div>
+        </q-card-section>
+        <q-card-actions align="right" class="q-mb-sm q-mt-md">
+          <q-btn
+            flat
+            label="Cancel"
+            color="gray"
+            @click="removeProductModal = false"
+          />
+          <q-btn
+            flat
+            label="Confirm"
+            color="red"
+            :disable="isBtnLoading"
+            @click="removeProduct"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model="updateProductModal">
+      <q-card class="full-width">
+        <q-card-section class="q-py-sm q-mt-sm">
+          <div class="q-mb-md">
+            <p class="text-h6 text-weight-bold">Update Product</p>
+            <p>Update the quantity to be bought</p>
+          </div>
+          <q-form ref="cartModalForm">
+            <q-input
+              v-model="selectedProduct.qty"
+              label="Quantity"
+              :rules="[maxQuantity]"
+            />
+          </q-form>
+          <p>Max Quantity: {{ selectedProduct.maxQty }}</p>
+        </q-card-section>
+        <q-card-actions align="right" class="q-mb-sm q-mt-md">
+          <q-btn v-close-popup flat label="Cancel" color="primary" />
+          <q-btn
+            flat
+            label="Update"
+            color="green"
+            :loading="isBtnLoading"
+            @click.prevent="updateCart"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
     <q-dialog v-model="deliveryFeeModal" class="">
       <q-card class="full-width fragment-radius">
         <q-card-section class="q-pt-sm q-pb-md">
@@ -273,6 +353,11 @@ const transactionData = reactive({
 });
 
 const $q = useQuasar();
+
+const productID = ref(null);
+const removeProductModal = ref(false);
+let selectedProduct = ref({ quantity: null, id: null, maxQuantity: 0 });
+const updateProductModal = ref(false);
 const deliveryFeeModal = ref(false);
 const checkoutModal = ref(false);
 const summary = ref(true);
@@ -284,15 +369,14 @@ const checkoutForm = ref("");
 
 const columns = [
   {
-    name: "id",
-    label: "ID",
-    align: "left",
-    field: (row) => row.id,
-    sortable: true,
+    name: "actions",
+    label: "Actions",
+    align: "center",
+    sortable: false,
   },
   {
     name: "name",
-    label: "PRODUCT",
+    label: "Product",
     align: "left",
     field: (row) => row.name,
     sortable: true,
@@ -325,6 +409,22 @@ const products = useProduct();
 const transactions = useTransactions();
 
 const currentDate = moment().format("MMMM Do YYYY, h:mm A");
+
+const removeProduct = () => {
+  console.log("hi");
+  let index = null;
+  cart.value.map((item, i) => {
+    if (item.id == productID.value) {
+      index = i;
+    }
+  });
+
+  if (index !== null) {
+    cart.value.splice(index, 1);
+  }
+
+  removeProductModal.value = false;
+};
 
 let subTotal = computed(() => {
   let total = 0;
@@ -425,6 +525,25 @@ const proceedCheckout = () => {
     summary.value = false;
     checkoutModal.value = true;
   }
+};
+
+const maxQuantity = (v) => {
+  const maxQty = parseInt(selectedProduct.value.maxQty);
+  if (parseInt(v) > maxQty) {
+    return "Insufficient stocks. Please lower your quantity";
+  }
+};
+
+const updateCart = () => {
+  cart.value.map((item, i) => {
+    if (item.id == selectedProduct.value.id) {
+      cart.value[i].qty = selectedProduct.value.qty;
+      cart.value[i].total =
+        selectedProduct.value.qty * parseFloat(selectedProduct.value.price);
+    }
+  });
+
+  updateProductModal.value = false;
 };
 </script>
 

@@ -1,6 +1,6 @@
 {
   "appId": "org.ims.quasar.app",
-  "appName": "E-Inventory",
+  "appName": "IMS",
   "bundledWebRuntime": false,
   "npmClient": "npm",
   "webDir": "www"

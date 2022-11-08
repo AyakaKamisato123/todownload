@@ -4,6 +4,26 @@
       <div class="text-weight-bold text-h6">Product Info</div>
       <div class="text-grey">Update your product information</div>
     </div>
+    <div class="q-my-md">
+      <img
+        v-if="productData.file"
+        :src="filePath"
+        alt="ProductImg"
+        class="img-fluid rounded-borders block q-mx-auto img-border"
+      />
+      <img
+        v-else
+        src="../assets/images/img-placeholder.png"
+        alt=""
+        class="img-fluid rounded-borders block q-mx-auto img-border"
+      />
+      <input
+        type="file"
+        class="q-mt-lg"
+        accept="image/*"
+        @change="onImageSelect"
+      />
+    </div>
     <q-form ref="form" @submit="updateProduct">
       <div class="q-gutter-sm">
         <q-input
@@ -219,6 +239,11 @@ import { useLogs } from "../composable/activitylog";
 import { useQuasar } from "quasar";
 import { useRouter, useRoute } from "vue-router";
 import { productCategories } from "src/helpers/categories";
+import {
+  Filesystem,
+  FilesystemDirectory,
+  FilesystemEncoding,
+} from "@capacitor/core";
 
 // const variantModal = ref({ shown: false, type: "add", editId: null });
 const $q = useQuasar();
@@ -233,10 +258,12 @@ const form = ref(null);
 let productId = ref(null);
 let indexOf = ref(null);
 let isBtnLoading = ref(false);
+let prodImg = ref({ image: null });
+let filePath = ref(null);
 
 let showDeleteModal = ref(false);
 
-onMounted(() => {
+onMounted(async () => {
   productId.value = route.params.id;
   const prodUpdate = products.value.filter(
     (prod) => prod.id == productId.value
@@ -250,6 +277,10 @@ onMounted(() => {
       indexOf.value = i;
     }
   });
+
+  if (!productData.file) return;
+  const res = await fileRead(productData.file);
+  filePath.value = `data:image/jpeg;base64,${res.data}`;
 });
 
 const initialState = {
@@ -305,13 +336,27 @@ const productData = reactive({ ...initialState });
 //   });
 // };
 
+const fileRead = async (file) => {
+  let content = await Filesystem.readFile({
+    path: `products/${file}`,
+    directory: FilesystemDirectory.Documents,
+    encoding: FilesystemEncoding.UTF8,
+  });
+
+  return content;
+};
+
 const updateProduct = () => {
-  products.value.map((prod, i) => {
+  products.value.map(async (prod, i) => {
     if (prod.id == productId.value) {
+      await writeFile();
       products.value[i] = {
         ...productData,
         updatedAt: Date.now(),
       };
+
+      products.value[i].file = prodImg.value.filename;
+      products.value[i].path = prodImg.value.path;
     }
   });
 
@@ -333,6 +378,20 @@ const updateProduct = () => {
   });
 
   router.go(-1);
+};
+
+const writeFile = async () => {
+  if (!prodImg.value.img_data) return;
+
+  try {
+    await Filesystem.writeFile({
+      path: `products/${prodImg.value.filename}`,
+      data: prodImg.value.img_data,
+      directory: FilesystemDirectory.Documents,
+    });
+  } catch (e) {
+    console.log("Error: ", e);
+  }
 };
 
 const deleteProduct = () => {
@@ -362,4 +421,26 @@ const deleteProduct = () => {
     router.go(-1);
   }, 1000);
 };
+
+const onImageSelect = async (e) => {
+  const file = e.target.files[0];
+  prodImg.value.image = file;
+  filePath.value = URL.createObjectURL(file);
+
+  const reader = new FileReader();
+
+  reader.onloadend = function () {
+    prodImg.value.img_data = reader.result;
+  };
+
+  reader.readAsDataURL(file);
+
+  const ext = prodImg.value.image.name.split(".").pop();
+  prodImg.value.filename = new Date().getTime() + "." + ext;
+};
 </script>
+<style>
+.img-border {
+  border: 1px solid rgb(41, 77, 220);
+}
+</style>

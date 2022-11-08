@@ -34,6 +34,7 @@
               :category="product.categories"
               :price="formatCurrency(product.price)"
               :qty="product.stocks"
+              :image="product.file"
               @click.prevent="showAddtoCartModal(product)"
             />
           </div>
@@ -233,6 +234,7 @@ const addToCart = () => {
       name: cart.value[cartIndex].name,
       qty: parseInt(cart.value[cartIndex].qty) + parseInt(cartItem.qty),
       price: cartItem.price,
+      maxQty: parseInt(selectedProduct.value.stocks),
       total:
         (parseInt(cart.value[cartIndex].qty) + parseInt(cartItem.qty)) *
         parseInt(cartItem.price),
@@ -241,6 +243,7 @@ const addToCart = () => {
   } else {
     cart.value.unshift({
       ...cartItem,
+      maxQty: parseInt(selectedProduct.value.stocks),
       total: cartItem.qty * cartItem.price,
       createdAt: Date.now(),
       updatedAt: Date.now(),

@@ -318,13 +318,6 @@ const writeFile = async () => {
   } catch (e) {
     console.log("Error: ", e);
   }
-
-  // const finalPhotoUri = await Filesystem.getUri({
-  //   directory: FilesystemDirectory.Documents,
-  //   path: productImage.filename,
-  // });
-
-  // productImage.path = finalPhotoUri;
 };
 
 const onImageSelect = async (e) => {
@@ -342,8 +335,6 @@ const onImageSelect = async (e) => {
 
   const ext = productImage.image.name.split(".").pop();
   productImage.filename = new Date().getTime() + "." + ext;
-
-  console.log(ext, productImage);
 };
 
 onMounted(async () => {

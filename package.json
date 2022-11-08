@@ -2,7 +2,7 @@
   "name": "pos-mobile-offline",
   "version": "0.0.1",
   "description": "A point of sales offline mobile app built with quasar",
-  "productName": "E-Inventory",
+  "productName": "IMS",
   "author": "Newbie",
   "private": true,
   "scripts": {
