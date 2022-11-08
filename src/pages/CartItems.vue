@@ -456,14 +456,22 @@ const checkoutTransaction = () => {
   checkoutForm.value.validate().then((success) => {
     if (success) {
       isBtnLoading.value = true;
+      let netIncome = 0;
 
       cart.value.map((item) => {
         products.value.map((prod) => {
           if (prod.id == item.id) {
             prod.stocks = parseInt(prod.stocks) - parseInt(item.qty);
+            netIncome +=
+              (parseFloat(prod.price) - parseFloat(prod.cost)) *
+              parseInt(item.qty);
           }
         });
       });
+
+      /**
+       *  Add net income of transaction
+       */
 
       transactions.value.unshift({
         id: transactions.value.length + 1,
@@ -472,6 +480,7 @@ const checkoutTransaction = () => {
         change:
           parseFloat(transactionData.amountReceived) -
           parseFloat(grandTotal.value),
+        netIncome: netIncome,
         items: [...cart.value],
         createdAt: Date.now(),
         updatedAt: Date.now(),

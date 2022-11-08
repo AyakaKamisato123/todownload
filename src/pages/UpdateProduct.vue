@@ -6,7 +6,7 @@
     </div>
     <div class="q-my-md">
       <img
-        v-if="productData.file"
+        v-if="productData.file || filePath"
         :src="filePath"
         alt="ProductImg"
         class="img-fluid rounded-borders block q-mx-auto img-border"
@@ -349,14 +349,15 @@ const fileRead = async (file) => {
 const updateProduct = () => {
   products.value.map(async (prod, i) => {
     if (prod.id == productId.value) {
-      await writeFile();
+      if (prodImg.value.img_data) {
+        await writeFile();
+      }
+
       products.value[i] = {
         ...productData,
+        file: prodImg.value.filename,
         updatedAt: Date.now(),
       };
-
-      products.value[i].file = prodImg.value.filename;
-      products.value[i].path = prodImg.value.path;
     }
   });
 
@@ -412,7 +413,7 @@ const deleteProduct = () => {
     isBtnLoading.value = false;
 
     $q.notify({
-      position: "bottom",
+      position: "top",
       color: "green",
       icon: "done_all",
       message: "Product deleted successfully!",

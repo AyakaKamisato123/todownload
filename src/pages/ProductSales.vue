@@ -46,6 +46,21 @@
           </q-card>
         </div>
       </div>
+      <div class="row q-mt-md">
+        <div class="col-12">
+          <q-card flat class="shadow-2 bg-primary text-white q-px-sm">
+            <q-card-section horizontal class="items-center row justify-between">
+              <q-card-section>
+                <p class="text-caption">Total Net Income</p>
+                <p class="text-h5 q-pt-sm">{{ formatCurrency(netIncome) }}</p>
+              </q-card-section>
+              <q-card-section>
+                <q-icon name="payments" size="72px" />
+              </q-card-section>
+            </q-card-section>
+          </q-card>
+        </div>
+      </div>
 
       <div class="q-mt-md">
         <p class="font-weight-bold text-h6">Transactions</p>
@@ -96,6 +111,13 @@ const columns = [
     sortable: true,
   },
   {
+    name: "netincome",
+    label: "NET INCOME",
+    align: "left",
+    field: (row) => formatCurrency(row.netIncome),
+    sortable: true,
+  },
+  {
     name: "totalamount",
     label: "TOTAL",
     align: "left",
@@ -117,6 +139,17 @@ let totalSales = computed(() => {
   transactions.value.map((trans) => {
     if (trans.totalAmount) {
       total += parseFloat(trans.totalAmount);
+    }
+  });
+  return total;
+});
+
+let netIncome = computed(() => {
+  let total = 0;
+
+  transactions.value.map((trans) => {
+    if (trans.netIncome) {
+      total += parseFloat(trans.netIncome);
     }
   });
   return total;
