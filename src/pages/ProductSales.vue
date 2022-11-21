@@ -61,7 +61,30 @@
           </q-card>
         </div>
       </div>
-
+      <div class="row q-gutter-sm" style="margin-top: 1px">
+        <div class="col">
+          <q-card flat class="shadow-2 bg-purple-7 text-white q-px-sm">
+            <q-card-section horizontal class="items-center row justify-between">
+              <q-card-section>
+                <p class="text-caption">Weekly Net</p>
+                <p class="text-h6 q-pt-sm">{{ formatCurrency(weeklyNet) }}</p>
+              </q-card-section>
+            </q-card-section>
+          </q-card>
+        </div>
+        <div class="col">
+          <q-card flat class="shadow-2 bg-black text-white q-px-sm">
+            <q-card-section horizontal class="items-center row justify-between">
+              <q-card-section>
+                <p class="text-caption">Monthly Net</p>
+                <p class="text-h6 q-pt-sm">
+                  {{ formatCurrency(monthlyNet) }}
+                </p>
+              </q-card-section>
+            </q-card-section>
+          </q-card>
+        </div>
+      </div>
       <div class="q-mt-md">
         <p class="font-weight-bold text-h6">Transactions</p>
         <p>Shown on the table are all your transactions</p>
@@ -150,6 +173,34 @@ let netIncome = computed(() => {
   transactions.value.map((trans) => {
     if (trans.netIncome) {
       total += parseFloat(trans.netIncome);
+    }
+  });
+  return total;
+});
+
+let weeklyNet = computed(() => {
+  let total = 0;
+
+  transactions.value.map((trans) => {
+    if (trans.netIncome) {
+      if (moment(trans.createdAt).isSameOrAfter(moment().subtract(1, "week"))) {
+        total += parseFloat(trans.netIncome);
+      }
+    }
+  });
+  return total;
+});
+
+let monthlyNet = computed(() => {
+  let total = 0;
+
+  transactions.value.map((trans) => {
+    if (trans.netIncome) {
+      if (
+        moment(trans.createdAt).isSameOrAfter(moment().subtract(1, "month"))
+      ) {
+        total += parseFloat(trans.netIncome);
+      }
     }
   });
   return total;

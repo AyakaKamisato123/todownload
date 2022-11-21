@@ -480,7 +480,7 @@ const checkoutTransaction = () => {
         change:
           parseFloat(transactionData.amountReceived) -
           parseFloat(grandTotal.value),
-        netIncome: netIncome,
+        netIncome: netIncome + parseFloat(transactionData.deliveryFee),
         items: [...cart.value],
         createdAt: Date.now(),
         updatedAt: Date.now(),

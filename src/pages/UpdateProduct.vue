@@ -5,7 +5,7 @@
       <div class="text-grey">Update your product information</div>
     </div>
     <div class="q-my-md">
-      <img
+      <!-- <img
         v-if="productData.file || filePath"
         :src="filePath"
         alt="ProductImg"
@@ -16,13 +16,13 @@
         src="../assets/images/img-placeholder.png"
         alt=""
         class="img-fluid rounded-borders block q-mx-auto img-border"
-      />
-      <input
+      /> -->
+      <!-- <input
         type="file"
         class="q-mt-lg"
         accept="image/*"
         @change="onImageSelect"
-      />
+      /> -->
     </div>
     <q-form ref="form" @submit="updateProduct">
       <div class="q-gutter-sm">
@@ -355,7 +355,6 @@ const updateProduct = () => {
 
       products.value[i] = {
         ...productData,
-        file: prodImg.value.filename,
         updatedAt: Date.now(),
       };
     }
@@ -383,7 +382,7 @@ const updateProduct = () => {
 
 const writeFile = async () => {
   if (!prodImg.value.img_data) return;
-
+  console.log("writing file...");
   try {
     await Filesystem.writeFile({
       path: `products/${prodImg.value.filename}`,
@@ -423,22 +422,22 @@ const deleteProduct = () => {
   }, 1000);
 };
 
-const onImageSelect = async (e) => {
-  const file = e.target.files[0];
-  prodImg.value.image = file;
-  filePath.value = URL.createObjectURL(file);
+// const onImageSelect = async (e) => {
+//   const file = e.target.files[0];
+//   prodImg.value.image = file;
+//   filePath.value = URL.createObjectURL(file);
 
-  const reader = new FileReader();
+//   const reader = new FileReader();
 
-  reader.onloadend = function () {
-    prodImg.value.img_data = reader.result;
-  };
+//   reader.onloadend = function () {
+//     prodImg.value.img_data = reader.result;
+//   };
 
-  reader.readAsDataURL(file);
+//   reader.readAsDataURL(file);
 
-  const ext = prodImg.value.image.name.split(".").pop();
-  prodImg.value.filename = new Date().getTime() + "." + ext;
-};
+//   const ext = prodImg.value.image.name.split(".").pop();
+//   prodImg.value.filename = new Date().getTime() + "." + ext;
+// };
 </script>
 <style>
 .img-border {
